@@ -1,7 +1,18 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * Copyright (C) 2018 Manish Joshi
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 import edu.princeton.cs.algs4.StdDraw;
@@ -89,10 +100,16 @@ public class Particle {
     public int count() {
         return count;
     }
-    
+
     /**
      * Returns the time required by {@code this} particle to collide with
      * {@code that} particle.
+     *
+     * If you don't understand the Physics used here. Refer this book-site,
+     * <a href = "https://algs4.cs.princeton.edu/61event/index.php#6.1">Algorithms
+     * 4th Edition</a>
+     *
+     * I am doing this project as an exercise after reading that book.
      *
      * @param that the other particle.
      * @return the time required for collision between this particle and that
@@ -102,82 +119,36 @@ public class Particle {
         if (this == that) {
             return INFINITY;
         }
+        double dx = that.rx - this.rx;          // x-axis displacement
+        double dy = that.ry - this.ry;          // y-axis displacement
+        double dvx = that.vx - this.vx;         // x-axis relative velocity
+        double dvy = that.vy - this.vy;         // y-axis relative velocity
 
-        double tX = this.convergenceTimeX(that);
-        double tY = this.convergenceTimeY(that);
-
-        if (tX == -1 && tY == -1) {
-            return 0;
-        } else if (tX == -1) {
-            return tY;
-        } else if (tY == -1) {
-            return tX;
-        } else if (tX != tY) {
-            return INFINITY;
-        } else {
-            // tX is equal to tY in this case
-            return tX;
-        }
-    }
-
-    private double convergenceTimeX(Particle that) {
-        // x-axis displacement taking into account radii of particles
-        double dX = this.rx - that.rx;
-
-        // relative x-axis velocity of this particle w.r.t that particle 
-        double relVelocityX = this.vx - that.vx;
-
-        // if particles have same X-coordinate and do not move w.r.t. one another at all
-        if (dX == 0 && relVelocityX == 0) {
-            // X coordinates are always the same for both particles
-            return -1;
-        } else if (relVelocityX == 0) {
-            // dX != 0 but relVelocity == 0 so time required = INFINITY
-            return INFINITY;
-        } else if (dX == 0) {
-            // dX == 0 but relVelocity != 0 so time required to collide in future = INFINITY
-            return INFINITY;
+        // dot product of vector dr and vector dv; predicts the existence of finite time to collide
+        double dvdr = dvx * dx + dvy * dy;
+        if (dvdr > 0) {
+            return INFINITY;        // I know this physics is weird
         }
 
-        // check relative velocity directions
-        if (Math.signum(dX) == Math.signum(relVelocityX)) {
-            return INFINITY;
-        } else {
-            // this must be added to dX before calculating time using velocity value
-            // essentially reduces the magnitude of dX by the sum of particles' radii
-            double radiusFactor = (-1) * Math.signum(dX) * (this.radius + that.radius);
-            return -(dX + radiusFactor) / relVelocityX;
-        }
-    }
-
-    private double convergenceTimeY(Particle that) {
-        // y-axis displacement taking into account the radii of the particles
-        double dY = this.ry - that.ry;
-
-        // relative y-axis velocity of this particle w.r.t that particle 
-        double relVelocityY = this.vy - that.vy;
-
-        // if particles have same Y-coordinate and do not move w.r.t. one another at all
-        if (dY == 0 && relVelocityY == 0) {
-            return -1;
-        } else if (relVelocityY == 0) {
-            // dY != 0 but relVelocityY == 0 so time required = INFINITY
-            return INFINITY;
-        } else if (dY == 0) {
-            // dY == 0 but relVelocity != 0 so time required to collide in future = INFINITY
-            return INFINITY;
+        double dvdv = dvx * dvx + dvy * dvy;    // magnitude of dv
+        if (dvdv == 0) {
+            return INFINITY;        // Means relative velocity is zero
         }
 
-        // check relative velocity direction 
-        if (Math.signum(dY) == Math.signum(relVelocityY)) {
-            // y coordinates diverge, time required = Infinity
-            return INFINITY;
-        } else {
-            // this must be added to dY before calculating time using velocity value
-            // essentially reduces the magnitude of dY by the sum of particles' radii
-            double radiusFactor = (-1) * Math.signum(dY) * (this.radius + that.radius);
-            return -(dY + radiusFactor) / relVelocityY;
+        double drdr = dx * dx + dy * dy;    // magnitude of dr vector
+
+        double sigma = that.radius + this.radius;       // sum of radii of colliding particles
+
+        // this discriminant comes from solution of a quadratic equation, see some Physics dude.
+        double discriminant = dvdr * dvdr - dvdv * (drdr - sigma * sigma);
+        if (drdr < sigma * sigma) {
+            System.out.println("Particles overlap !!! UNEXPECTED behaviour expected :p");
         }
+        if (discriminant < 0) {
+            return INFINITY;    // there are no solutions to equation or the time to collide 
+        }
+        return -(dvdr + Math.sqrt(discriminant)) / dvdv;    
+        // we ignore the other solution (Why ? because there can be two collisons in Mathematics; think about it, try it)
     }
 
     /**
@@ -219,7 +190,7 @@ public class Particle {
      * @param b
      */
     public void bounceOff(Particle b) {
-        
+
     }
 
     public void bounceOffVerticalWall() {
@@ -246,8 +217,8 @@ public class Particle {
         Particle p = new Particle(.5, 0, 0, 1, 0.03, 0, Color.BLACK);
         Particle q = new Particle(.5, 1, 0.0, -1, 0.05, 0, Color.BLACK);
         System.out.println(p.timeToHit(q));
-        p.move(0.46);
-        q.move(0.46);
+        p.move(0.5399);
+        q.move(0.5399);
         p.draw();
         q.draw();
         // StdDraw.filledCircle(.1, .1, .2);
