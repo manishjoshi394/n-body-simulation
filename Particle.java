@@ -27,15 +27,15 @@ import java.awt.Color;
  */
 public class Particle {
 
-    private final double INFINITY = Double.POSITIVE_INFINITY;
+    private final double INFINITY = Double.POSITIVE_INFINITY;   
 
     private double rx, ry;                  // position
     private double vx, vy;                  // velocity
     private final double radius;            // radius of particle 
     private final double mass;              // mass of the particle
 
-    private int count;
-    private Color color;
+    private int count;                      // number of collisions the particle has been through till now
+    private Color color;                    // the color of this particle
 
     /**
      * Initializes a particle with random position and velocity.
@@ -79,6 +79,7 @@ public class Particle {
      * Draws this particle to the Standard Draw.
      */
     public void draw() {
+        StdDraw.setPenColor(color);
         StdDraw.filledCircle(rx, ry, radius);
     }
 
@@ -104,11 +105,11 @@ public class Particle {
     /**
      * Returns the time required by {@code this} particle to collide with
      * {@code that} particle.
-     *
+     * <p>
      * If you don't understand the Physics used here. Refer this book-site,
      * <a href = "https://algs4.cs.princeton.edu/61event/index.php#6.1">Algorithms
      * 4th Edition</a>
-     *
+     * <p>
      * I am doing this project as an exercise after reading that book.
      *
      * @param that the other particle.
@@ -147,7 +148,7 @@ public class Particle {
         if (discriminant < 0) {
             return INFINITY;    // there are no solutions to equation or the time to collide 
         }
-        return -(dvdr + Math.sqrt(discriminant)) / dvdv;    
+        return -(dvdr + Math.sqrt(discriminant)) / dvdv;
         // we ignore the other solution (Why ? because there can be two collisons in Mathematics; think about it, try it)
     }
 
@@ -186,20 +187,63 @@ public class Particle {
     }
 
     /**
+     * Updates the velocities of this and {@code that} particle acccording to
+     * the laws of elastic collision. Assumes the particles collide at this
+     * moment.
+     * <p>
+     * If you don't understand the Physics used here. Refer this book-site,
+     * <a href = "https://algs4.cs.princeton.edu/61event/index.php#6.1">Algorithms
+     * 4th Edition</a>
+     * <p>
+     * I am doing this project as an exercise after reading that book.
      *
-     * @param b
+     * @param that
      */
-    public void bounceOff(Particle b) {
+    public void bounceOff(Particle that) {
+        double dx = that.rx - this.rx;
+        double dy = that.ry - this.ry;
+        double dvx = that.vx - this.vx;
+        double dvy = that.vy - this.vy;
+        // dot product of dv vector and dr vector
+        double dvdr = dvx * dx + dvy * dy;
+        // sum of the radii of this and that particle
+        double sigma = this.radius + that.radius;
 
+        // total magnitude of impulse exchanged on collision
+        double j = 2 * dvdr * this.mass * that.mass / ((this.mass + that.mass) * sigma);
+
+        // x and y components of the Impulse 
+        double jx = j * dx / sigma;
+        double jy = j * dy / sigma;
+
+        // update velocity according to momentum change given by impulse
+        this.vx += jx / this.mass;
+        this.vy += jy / this.mass;
+        that.vx -= jx / that.mass;
+        that.vy -= jy / that.mass;
+
+        // update collision counts
+        this.count++;
+        that.count++;
     }
 
+    /**
+     * Updates the velocity of this particle upon collision with a Vertical
+     * wall. Assumes the collision is undergoing at this instant. Reflects the
+     * x-component of the velocity.
+     */
     public void bounceOffVerticalWall() {
-        vx = -vx;
+        this.vx = -this.vx;
         count++;
     }
 
+    /**
+     * Updates the velocity of this particle upon collision with a Horizontal
+     * wall. Assumes that the paricle collides with the wall at this instant.
+     * Reflects the velocity in y-direction.
+     */
     public void bounceOffHorizontalWall() {
-        vy = -vy;
+        this.vy = -this.vy;
         count++;
     }
 
@@ -209,16 +253,30 @@ public class Particle {
      * @return the kinetic energy of this particle
      */
     public double kineticEnergy() {
+        // elementary formula 1/2 * m * v * v 
         return (mass * (vx * vx + vy * vy)) / 2;
     }
 
-    // for unit testing of the class
+    /**
+     * For unit testing of the class Particle.java
+     *
+     * @param args the command line arguments
+     */
     public static void main(String[] args) {
-        Particle p = new Particle(.5, 0, 0, 1, 0.03, 0, Color.BLACK);
-        Particle q = new Particle(.5, 1, 0.0, -1, 0.05, 0, Color.BLACK);
+        Particle p = new Particle(.5, 0, 0, 1, 0.03, 1, Color.BLACK);
+        Particle q = new Particle(.5, 1, 0.0, -1, 0.05, 1, Color.BLACK);
         System.out.println(p.timeToHit(q));
-        p.move(0.5399);
-        q.move(0.5399);
+
+        p.move(0.46);
+        q.move(0.46);
+
+        p.draw();
+        q.draw();
+        System.out.println(q.vy);;
+        p.bounceOff(q);
+        System.out.println(q.vy);;
+        p.move(0.2);
+        q.move(0.2);
         p.draw();
         q.draw();
         // StdDraw.filledCircle(.1, .1, .2);
