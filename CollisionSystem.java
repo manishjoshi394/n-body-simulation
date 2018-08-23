@@ -230,7 +230,7 @@ public class CollisionSystem {
     //  for unit testing of the class
     public static void main(String[] args) {
         
-        StdDraw.setCanvasSize(1000, 1000);
+        StdDraw.setCanvasSize(800, 800);
         
         // the array of particles
         Particle[] particles;
@@ -266,7 +266,7 @@ public class CollisionSystem {
 
         // create collision system and simulate
         CollisionSystem system = new CollisionSystem(particles);
-     system.setRedrawHZ(10);
+        system.setRedrawHZ(10);
         system.simulate(10000);
            }
 
