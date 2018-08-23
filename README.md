@@ -1,4 +1,7 @@
 # 2-Dimensional elastic N-Particle simulation
+
+**See the API documentation here: http://manishjoshi394.github.io/n-body-simulation**
+
 ### Introduction
 This is an Elastic version of the classic [N-body simulation problem](https://en.wikipedia.org/wiki/N-body_simulation). Here bodies under consideration are small particles like molecules in a gas. The motion involved is the same as in the dynamics of chemical reactions, atomic diffusion, sphere packing, the stability of the rings around Saturn, the phase transitions of cerium and cesium, one-dimensional self-gravitating systems, and front propagation.[[reference]](https://arxiv.org/ftp/physics/papers/0405/0405089.pdf)
 <p>
