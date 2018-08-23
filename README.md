@@ -1,8 +1,9 @@
 # 2-Dimensional elastic N-Particle simulation
 ### Introduction
 This is an Elastic version of the classic [N-body simulation problem](https://en.wikipedia.org/wiki/N-body_simulation). Here bodies under consideration are small particles like molecules in a gas. The motion involved is the same as in the dynamics of chemical reactions, atomic diffusion, sphere packing, the stability of the rings around Saturn, the phase transitions of cerium and cesium, one-dimensional self-gravitating systems, and front propagation.[[reference]](https://arxiv.org/ftp/physics/papers/0405/0405089.pdf)
-<p align="center">
-  <img src = "https://media.giphy.com/media/LYs80TvMFLijsNjMaE/giphy.gif"/>
+<p>
+  <img src = "/docs/img/p10.gif" align = "left"/>
+  <img src = "/docs/img/p2000.gif" align = "right"/>
 </p>
 
 This program simulates the motion of N colliding particles according to the laws of elastic collision using event-driven simulation. The same techniques apply to other domains that involve physical modeling of particle systems. For example, in Molecular Dynamics to understand and predict properties of physical systems at the particle level; others include computer graphics, computer games, and robotics.
