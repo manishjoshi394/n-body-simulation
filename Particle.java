@@ -20,6 +20,10 @@ import dependencies.*;
 import java.awt.Color;
 
 /**
+ * The {@code Particle} class represents a particle moving in the unit box, with
+ * given position, velocity, radius, and mass. Methods are provided for moving
+ * the particle and simulating elastic collisions with vertical walls,
+ * horizontal walls, and other particles.
  *
  * @author manishjoshi394
  */

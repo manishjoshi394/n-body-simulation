@@ -14,6 +14,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
+import dependencies.*;
+import java.awt.Color;
+import java.util.PriorityQueue;
+
 /**
  * The 2D-N-Particle Elastic collision simulator class. The class provides a
  * relatively efficient API for any simulations the client might want to do with
@@ -24,11 +29,6 @@
  *
  * @author Manish Joshi
  */
-
-import dependencies.*;
-import java.awt.Color;
-import java.util.PriorityQueue;
-
 public class CollisionSystem {
 
     private double HZ = 0.5;    // redraw frequency as redraws per clock tick (in Simulator time)
