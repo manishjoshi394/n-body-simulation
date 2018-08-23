@@ -1,6 +1,6 @@
 # 2-Dimensional elastic N-Particle simulation
 
-### Introduction
+## Introduction
 This is an Elastic version of the classic [N-body simulation problem](https://en.wikipedia.org/wiki/N-body_simulation). Here bodies under consideration are small particles like molecules in a gas. The motion involved is the same as in the dynamics of chemical reactions, atomic diffusion, sphere packing, the stability of the rings around Saturn, the phase transitions of cerium and cesium, one-dimensional self-gravitating systems, and front propagation.[[reference]](https://arxiv.org/ftp/physics/papers/0405/0405089.pdf)
 <p>
   <img src = "/docs/img/p10.gif" align = "left"/>
@@ -36,7 +36,7 @@ For example:
 If I do-
 - `javac CollisionSystem.java`
 - `java CollisionSystem < sample-data-files/diffusion.txt`
-- Then, a Diffision of particles simulation window appears as shown on the right. [Thanks to GIPHY, where i made the GIFs](https://giphy.com) 
+- Then, a Diffision of particles simulation window appears as shown on the right. [Thanks to GIPHY, where i made the GIFs from onscreen recordings](https://giphy.com) 
 <img src = "/docs/img/diffusion.gif" align = "right"/>
 
 Simulation stops after some minutes as configured in the default `main()` method inside `CollisionSystem` class. 
