@@ -15,9 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import edu.princeton.cs.algs4.StdDraw;
-import edu.princeton.cs.algs4.StdOut;
-import edu.princeton.cs.algs4.StdRandom;
+import dependencies.*;
 
 import java.awt.Color;
 
@@ -27,7 +25,9 @@ import java.awt.Color;
  */
 public class Particle {
 
-    private final double INFINITY = Double.POSITIVE_INFINITY;   
+    private static final double INFINITY = Double.POSITIVE_INFINITY;
+    private static Color defaultColor = Color.BLACK;
+    private static boolean useRadiusUpscaling = false;
 
     private double rx, ry;                  // position
     private double vx, vy;                  // velocity
@@ -43,13 +43,13 @@ public class Particle {
     public Particle() {
         this.count = 0;
 
-        this.rx = StdRandom.uniform(0, 1);
-        this.ry = StdRandom.uniform(0, 1);
+        this.rx = StdRandom.uniform(0.5, 0.95);
+        this.ry = StdRandom.uniform(0.5, 0.95);
         this.vx = StdRandom.uniform(-0.5, 0.5);
         this.vy = StdRandom.uniform(-0.5, 0.5);
         this.radius = 0.01;
         this.mass = 0.5;
-        this.color = Color.BLACK;
+        this.color = defaultColor;
     }
 
     /**
@@ -70,7 +70,17 @@ public class Particle {
         this.ry = ry;
         this.vx = vx;
         this.vy = vy;
-        this.radius = radius;
+
+        // 0.03 is used as minimum observable radius onscreen
+        if (!radiusUpscalingEnabled() && radius < 0.003) {
+            this.radius = radius;
+            System.out.println("WARNING : Particle radius too small to be observed, \n"
+                    + "HINT : use radius upscaling function in Particle class to upscale the size to minimum observable.");
+        } else if (radiusUpscalingEnabled() && radius < 0.003) {
+            this.radius = 0.003;
+        } else {
+            this.radius = radius;
+        }
         this.mass = mass;
         this.color = color;
     }
@@ -180,7 +190,7 @@ public class Particle {
         if (vx < 0) {
             return (radius - rx) / vx;
         } else if (vx > 0) {
-            return (1.0 - rx - radius) / vy;
+            return (1.0 - rx - radius) / vx;
         } else {
             return INFINITY;
         }
@@ -258,27 +268,62 @@ public class Particle {
     }
 
     /**
+     * Set new default color for randomly generated particles. Does NOT do
+     * anything for particles constructed with specific colors.
+     *
+     * @param newColor the new default color for random particles
+     */
+    public void setDefaultColor(Color newColor) {
+        Particle.defaultColor = newColor;
+    }
+
+    /**
+     * If this setting is turned on, small sized particles are upscaled to
+     * minimum observable radius onscreen which otherwise might be invisible due
+     * to extremely small size.
+     * <p>
+     * By default this is disabled.
+     *
+     * @param yes if {@code true} up-scaling is enabled, other not.
+     */
+    public static void useRadiusUpscaling(boolean yes) {
+        if (yes) {
+            useRadiusUpscaling = true;
+        } else {
+            useRadiusUpscaling = false;
+        }
+    }
+
+    /**
+     * Returns true if radius upscaling is enabled.
+     *
+     * @return true if radius upscaling is enabled
+     */
+    public static boolean radiusUpscalingEnabled() {
+        return useRadiusUpscaling;
+    }
+
+    /**
      * For unit testing of the class Particle.java
      *
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        Particle p = new Particle(.5, 0, 0, 1, 0.03, 1, Color.BLACK);
-        Particle q = new Particle(.5, 1, 0.0, -1, 0.05, 1, Color.BLACK);
-        System.out.println(p.timeToHit(q));
-
-        p.move(0.46);
-        q.move(0.46);
+        Particle p = new Particle(0, .5, 1, 0, 0.001, 1, Color.RED);
+        //Particle q = new Particle(.5, 1, -1, 0, 0.05, 1, Color.BLACK);
+        System.out.println(p.timeToHitVerticalWall());
 
         p.draw();
-        q.draw();
-        System.out.println(q.vy);;
-        p.bounceOff(q);
-        System.out.println(q.vy);;
-        p.move(0.2);
-        q.move(0.2);
+        //q.move(0.5);
+        // p.draw();
+        // q.draw();
+        //System.out.println(q.vy);;
+        p.bounceOffVerticalWall();
+        //System.out.println(q.vy);;
+        p.move(0.0);
         p.draw();
-        q.draw();
+        //q.draw();
+        StdDraw.show();
         // StdDraw.filledCircle(.1, .1, .2);
     }
 }
